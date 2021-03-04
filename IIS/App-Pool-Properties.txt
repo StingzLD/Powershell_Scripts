@@ -1,0 +1,32 @@
+name                        : .NET v4.5
+queueLength                 : 1000
+autoStart                   : True
+enable32BitAppOnWin64       : False
+managedRuntimeVersion       : v4.0
+managedRuntimeLoader        : webengine4.dll
+enableConfigurationOverride : True
+managedPipelineMode         : Integrated
+CLRConfigFile               : 
+passAnonymousToken          : True
+startMode                   : OnDemand
+state                       : Started
+applicationPoolSid          : S-1-5-82-271721585-897601226-2024613209-625570482-296978595
+processModel                : Microsoft.IIs.PowerShell.Framework.ConfigurationElement
+recycling                   : Microsoft.IIs.PowerShell.Framework.ConfigurationElement
+failure                     : Microsoft.IIs.PowerShell.Framework.ConfigurationElement
+cpu                         : Microsoft.IIs.PowerShell.Framework.ConfigurationElement
+environmentVariables        : Microsoft.IIs.PowerShell.Framework.ConfigurationElement
+workerProcesses             : Microsoft.IIs.PowerShell.Framework.ConfigurationElement
+ItemXPath                   : /system.applicationHost/applicationPools/add[@name='.NET v4.5']
+PSPath                      : WebAdministration::\\DFWDINFWEBX01\AppPools\.NET v4.5
+PSParentPath                : WebAdministration::\\DFWDINFWEBX01\AppPools
+PSChildName                 : .NET v4.5
+PSDrive                     : IIS
+PSProvider                  : WebAdministration
+PSIsContainer               : True
+Attributes                  : {name, queueLength, autoStart, enable32BitAppOnWin64...}
+ChildElements               : {processModel, recycling, failure, cpu...}
+ElementTagName              : add
+Methods                     : {Start, Stop, Recycle}
+Schema                      : Microsoft.IIs.PowerShell.Framework.ConfigurationElementSchema
+

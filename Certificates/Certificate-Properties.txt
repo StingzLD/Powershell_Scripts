@@ -1,0 +1,33 @@
+PSPath                   : Microsoft.PowerShell.Security\Certificate::LocalMachine\My\8C5A9262CCCCE957D4D500FEE332FA816
+                           241C96E
+PSParentPath             : Microsoft.PowerShell.Security\Certificate::LocalMachine\My
+PSChildName              : 8C5A9262CCCCE957D4D500FEE332FA816241C96E
+PSDrive                  : Cert
+PSProvider               : Microsoft.PowerShell.Security\Certificate
+PSIsContainer            : False
+EnhancedKeyUsageList     : {Server Authentication (1.3.6.1.5.5.7.3.1)}
+DnsNameList              : {*.emsidev.com}
+SendAsTrustedIssuer      : False
+EnrollmentPolicyEndPoint : Microsoft.CertificateServices.Commands.EnrollmentEndPointProperty
+EnrollmentServerEndPoint : Microsoft.CertificateServices.Commands.EnrollmentEndPointProperty
+PolicyId                 : {F908C24A-837E-4710-AE82-170E5F16F074}
+Archived                 : False
+Extensions               : {System.Security.Cryptography.Oid, System.Security.Cryptography.Oid,
+                           System.Security.Cryptography.Oid, System.Security.Cryptography.Oid...}
+FriendlyName             : *.emsidev.com
+IssuerName               : System.Security.Cryptography.X509Certificates.X500DistinguishedName
+NotAfter                 : 6/5/2027 11:41:18 AM
+NotBefore                : 6/30/2017 11:35:20 AM
+HasPrivateKey            : True
+PrivateKey               :
+PublicKey                : System.Security.Cryptography.X509Certificates.PublicKey
+RawData                  : {48, 130, 6, 160...}
+SerialNumber             : 1E0000002CE156248152A1E9CC00000000002C
+SubjectName              : System.Security.Cryptography.X509Certificates.X500DistinguishedName
+SignatureAlgorithm       : System.Security.Cryptography.Oid
+Thumbprint               : 8C5A9262CCCCE957D4D500FEE332FA816241C96E
+Version                  : 3
+Handle                   : 2536890589248
+Issuer                   : CN=EMSIDEVG2PKI, DC=EMSIDEV, DC=com
+Subject                  : E=infrastructure@emsinet.com, CN=*.emsidev.com, OU=Infrastructure, O=EMSI, L=Irving,
+                           S=Texas, C=US

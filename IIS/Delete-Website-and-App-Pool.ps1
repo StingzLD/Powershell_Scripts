@@ -3,10 +3,15 @@ $appName = $siteName
 $hostname = $siteName
 $siteIP = Read-Host -Prompt "Enter the Website IP"
 
+If ($siteIP -eq ""){
+    $siteIP = "*"
+}
+
 Remove-Website -Name $siteName
 Remove-WebAppPool -Name $appName
 netsh http delete sslcert ipport=${siteIP}:443
 
 
+#Remove-WebBinding -Name $siteName -Protocol "https" -IPAddress $siteIP -Port 443
 #Remove-WebBinding -Name $siteName -Protocol "https" -IPAddress $siteIP -Port 443 -HostHeader $hostname
 #Remove-Item -Path E:\Websites\$siteName

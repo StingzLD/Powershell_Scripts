@@ -1,5 +1,6 @@
 $users = Get-ADUser -ldapfilter “(objectclass=user)” -searchbase “OU=<ou name>,DC=<domain name>,DC=com”
-ForEach($user in $users)
+
+$display = ForEach($user in $users)
 {
     # Binding the users to DS
     $ou = [ADSI](“LDAP://” + $user)
@@ -11,10 +12,12 @@ ForEach($user in $users)
         $preserveInheritance = $true ## preserve inherited rules
         $sec.SetAccessRuleProtection($isProtected, $preserveInheritance)
         $ou.psbase.commitchanges()
-        Write-Host “$user is now inherting permissions”;
+        Write-Output “$user is now inherting permissions”;
     }
     else
     {
-        Write-Host “$User Inheritable Permission already set”
+        Write-Output “$User Inheritable Permission already set”
     }
 }
+
+$display | Out-File -FilePath "<path>"

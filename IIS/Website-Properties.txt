@@ -1,0 +1,29 @@
+name                       : test
+id                         : 1
+serverAutoStart            : True
+state                      : Started
+bindings                   : Microsoft.IIs.PowerShell.Framework.ConfigurationElement
+limits                     : Microsoft.IIs.PowerShell.Framework.ConfigurationElement
+logFile                    : Microsoft.IIs.PowerShell.Framework.ConfigurationElement
+traceFailedRequestsLogging : Microsoft.IIs.PowerShell.Framework.ConfigurationElement
+hsts                       : Microsoft.IIs.PowerShell.Framework.ConfigurationElement
+applicationDefaults        : Microsoft.IIs.PowerShell.Framework.ConfigurationElement
+virtualDirectoryDefaults   : Microsoft.IIs.PowerShell.Framework.ConfigurationElement
+ftpServer                  : Microsoft.IIs.PowerShell.Framework.ConfigurationElement
+Collection                 : {Microsoft.IIs.PowerShell.Framework.ConfigurationElement}
+applicationPool            : test
+enabledProtocols           : http
+physicalPath               : E:\Websites\test
+userName                   : 
+password                   : 
+ItemXPath                  : /system.applicationHost/sites/site[@name='test' and @id='1']
+PSPath                     : WebAdministration::\\DFWDINFWEBX01\Sites\test
+PSParentPath               : WebAdministration::\\DFWDINFWEBX01\Sites
+PSChildName                : test
+PSDrive                    : IIS
+PSProvider                 : WebAdministration
+Attributes                 : {name, id, serverAutoStart, state}
+ChildElements              : {bindings, limits, logFile, traceFailedRequestsLogging...}
+ElementTagName             : site
+Methods                    : {Start, Stop}
+Schema                     : Microsoft.IIs.PowerShell.Framework.ConfigurationElementSchema

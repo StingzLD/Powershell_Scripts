@@ -8,7 +8,7 @@ ForEach($user in $users)
     if ($sec.get_AreAccessRulesProtected())
     {
         $isProtected = $false ## allows inheritance
-        $preserveInheritance = $true ## preserver inhreited rules
+        $preserveInheritance = $true ## preserver inherited rules
         Write-Host “$user Inheritable Permission Disabled”;
     }
     else
