@@ -1,4 +1,4 @@
-<# Get security events associated with system startup/shutdown
+<# Get application events associated with system startup/shutdown
 
 Event ID 6005: “The event log service was started.”
                 This is synonymous to system startup.
