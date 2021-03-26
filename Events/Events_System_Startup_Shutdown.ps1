@@ -20,5 +20,5 @@ Event ID 1076: "The reason supplied by user X for the last unexpected shutdown o
 Get-EventLog -LogName System |
     ? {$_.EventID -in (6005,6006,6008,6009,1074,1076)} |
     ft TimeGenerated,EventId,Message -AutoSize –wrap |
-    Export-Csv "C:\Security_Log_Logons_Logoffs.csv"
-"C:\Security_Log_Logons_Logoffs.csv"
+    Export-Csv "C:\Application_Log_Startup_Shutdown.csv"
+"C:\Application_Log_Startup_Shutdown.csv"
