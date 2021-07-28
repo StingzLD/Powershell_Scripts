@@ -1,0 +1,25 @@
+Connect to vCenter:
+Connect-VIServer <vCenterHost>
+
+Collect info on the DataCenter itself:
+Get-DataCenter -Name <DataCenterName>
+
+Collect info on the cluster itself:
+Get-Cluster -Name <ClusterName>
+
+Collect info on the hosts in the cluster:
+Get-Cluster -Name <ClusterName> | Get-VMHost
+
+Collect info on a single host in the cluster:
+Get-VMHost -Name <HostName>
+
+Check if SSH is running on any hosts:
+Get-VMHost | Get-VMHostService | Where Key -eq "TSM-SSH"| Where Running -eq True | select VMHost, Running
+
+Enable SSH on all hosts:
+Get-VMHost | Get-VMHostService | Where Key -eq "TSM-SSH" | Start-VMHostService -Confirm:$false
+Get-VMHost | Get-VMHostService | Where Key -eq "TSM-SSH" | Set-VMHostService -Policy "on" -Confirm:$false
+
+Disable SSH on all hosts:
+Get-VMHost | Get-VMHostService | Where Key -eq "TSM-SSH" | Stop-VMHostService -Confirm:$false
+Get-VMHost | Get-VMHostService | Where Key -eq "TSM-SSH" | Set-VMHostService -Policy "off" -Confirm:$false
