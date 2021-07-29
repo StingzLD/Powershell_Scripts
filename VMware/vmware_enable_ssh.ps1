@@ -1,18 +1,18 @@
-$venue = Read-Host("Please enter the location shortname")
+$location = Read-Host("Please enter the location")
 $vcenter = $env:VCENTER
 $domain = $env:VCENTER_DOMAIN
 $vcenter_main = $env:VCENTER_MAIN
 $creds = Get-Credential
 
-Connect-VIServer "$vcenter.$venue.$domain" -Credential $creds
+Connect-VIServer "$vcenter.$location.$domain" -Credential $creds
 
-Get-VMHost | Get-VMHostService | Where-Object Key -EQ "TSM-SSH" | Start-VMHostService -Confirm:$False
-Get-VMHost | Get-VMHostService | Where-Object Key -EQ "TSM-SSH" | Set-VMHostService -Policy "on" -Confirm:$False
+Get-VMHost | Get-VMHostService | Where-Object Key -eq "TSM-SSH" | Start-VMHostService -Confirm:$false
+Get-VMHost | Get-VMHostService | Where-Object Key -eq "TSM-SSH" | Set-VMHostService -Policy "on" -Confirm:$false
 
-Disconnect-VIServer "$vcenter.$venue.$domain" -Confirm:$False
+Disconnect-VIServer "$vcenter.$location.$domain" -Confirm:$false
 Connect-VIServer $vcenter_main -Credential $creds
 
-Get-DataCenter $venue | Get-VMHost | Get-VMHostService | Where-Object Key -EQ "TSM-SSH" | Start-VMHostService -Confirm:$False
-Get-DataCenter $venue | Get-VMHost | Get-VMHostService | Where-Object Key -EQ "TSM-SSH" | Set-VMHostService -Policy "on" -Confirm:$False
+Get-DataCenter $location | Get-VMHost | Get-VMHostService | Where-Object Key -eq "TSM-SSH" | Start-VMHostService -Confirm:$false
+Get-DataCenter $location | Get-VMHost | Get-VMHostService | Where-Object Key -eq "TSM-SSH" | Set-VMHostService -Policy "on" -Confirm:$false
 
-Disconnect-VIServer $vcenter_main
+Disconnect-VIServer $vcenter_main -Confirm:$false

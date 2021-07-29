@@ -31,26 +31,28 @@ $domain = $env:VCENTER_DOMAIN
 
 
 function Enable-SSH {
-    # Start the SSH service
-    Get-VMHost | Get-VMHostService | Where-Object Key -eq "TSM-SSH" |
-        Start-VMHostService -Confirm:$false
-    # Enable the SSH service policy
-    Get-VMHost | Get-VMHostService | Where-Object Key -eq "TSM-SSH" |
-        Set-VMHostService -Policy "on" -Confirm:$false
+    # # Start the SSH service
+    # Get-VMHost | Get-VMHostService | Where-Object Key -eq "TSM-SSH" |
+    #     Start-VMHostService -Confirm:$false
+    # # Enable the SSH service policy
+    # Get-VMHost | Get-VMHostService | Where-Object Key -eq "TSM-SSH" |
+    #     Set-VMHostService -Policy "on" -Confirm:$false
+    Write-Output "SSH Enabled"
 }
 
 function Disable-SSH {
-    # Stop the SSH service
-    Get-VMHost | Get-VMHostService | Where-Object Key -eq "TSM-SSH" |
-        Stop-VMHostService -Confirm:$false
-    # Disable the SSH service policy
-    Get-VMHost | Get-VMHostService | Where-Object Key -eq "TSM-SSH" |
-        Set-VMHostService -Policy "off" -Confirm:$false
+    # # Stop the SSH service
+    # Get-VMHost | Get-VMHostService | Where-Object Key -eq "TSM-SSH" |
+    #     Stop-VMHostService -Confirm:$false
+    # # Disable the SSH service policy
+    # Get-VMHost | Get-VMHostService | Where-Object Key -eq "TSM-SSH" |
+    #     Set-VMHostService -Policy "off" -Confirm:$false
+    Write-Output "SSH Disabled"
 }
 
 
 # Store credentials
-$creds = Get-Credential
+# $creds = Get-Credential
 
 # Gather location from user
 $location = Read-Host "`nPlease enter the location"
@@ -79,7 +81,7 @@ else {
 
 
 # Disconnect from the vCenter appliance
-Disconnect-VIServer "$vcenter.$location.$domain" -Confirm:$false
+Disconnect-VIServer "$vcenter.$location.$domain" -Confirm:$False
 
 
 ###############################################################################
@@ -92,23 +94,25 @@ $vcenter_main = $env:VCENTER_MAIN
 
 
 function Enable-SSH-MAIN {
-    # Stop the SSH service
-    Get-DataCenter $location | Get-VMHost | Get-VMHostService |
-        Where-Object Key -eq "TSM-SSH" | Start-VMHostService -Confirm:$false
-    # Disable the SSH service policy
-    Get-DataCenter $location |Get-VMHost | Get-VMHostService | 
-        Where-Object Key -eq "TSM-SSH" |
-        Set-VMHostService -Policy "on" -Confirm:$false
+    # # Stop the SSH service
+    # Get-DataCenter $location | Get-VMHost | Get-VMHostService |
+    #     Where-Object Key -eq "TSM-SSH" | Start-VMHostService -Confirm:$false
+    # # Disable the SSH service policy
+    # Get-DataCenter $location |Get-VMHost | Get-VMHostService | 
+    #     Where-Object Key -eq "TSM-SSH" |
+    #     Set-VMHostService -Policy "on" -Confirm:$false
+    Write-Output "Main SSH Enabled"
 }
 
 function Disable-SSH-MAIN {
-    # Stop the SSH service
-    Get-DataCenter $location | Get-VMHost | Get-VMHostService |
-        Where-Object Key -eq "TSM-SSH" | Stop-VMHostService -Confirm:$false
-    # Disable the SSH service policy
-    Get-DataCenter $location |Get-VMHost | Get-VMHostService | 
-        Where-Object Key -eq "TSM-SSH" |
-        Set-VMHostService -Policy "off" -Confirm:$false
+    # # Stop the SSH service
+    # Get-DataCenter $location | Get-VMHost | Get-VMHostService |
+    #     Where-Object Key -eq "TSM-SSH" | Stop-VMHostService -Confirm:$false
+    # # Disable the SSH service policy
+    # Get-DataCenter $location |Get-VMHost | Get-VMHostService | 
+    #     Where-Object Key -eq "TSM-SSH" |
+    #     Set-VMHostService -Policy "off" -Confirm:$false
+    Write-Output "Main SSH Disabled"
 }
 
 
