@@ -12,9 +12,9 @@
 #
 #
 # ****************************** IMPORTANT NOTES *******************************
-# This script requires the installation of the PowerCLI module. If this is not
-# yet installed on this machine, open PowerShell and run the following command:
-# Install-Module VMware.PowerCLI
+# This script must be run as an administrator and requires the installation of
+# the PowerCLI module. If this is not yet installed on this machine, open
+# PowerShell and run the following command:  Install-Module VMware.PowerCLI
 #
 # There are three CSVs required for this script, all of which contain the
 # locations in a single column with a Header of 'Name':
@@ -26,6 +26,9 @@
 # VCENTER = The appliances hostname ('appliance' in the example above)
 # VCENTER_DOMAIN = The company's domain ('company.com' in the example above)
 # VCENTER_MAIN = The main location's vCenter appliance's FQDN
+#
+# A log is automatically created when running this script and is located at:
+# C:\Program Files\WindowsPowerShell\Logs
 ################################################################################
 
 
@@ -83,15 +86,24 @@ function getUserInput
         # Determine if SSH is to be enabled or disabled
         chooseOptionText
         $userInput = Read-Host
+        $userInput | timestamp | Tee-Object -FilePath $logFile -Append |
+                Out-Null
 
         # If input is invalid, retry until input is valid
         do
         {
             if (($userInput -ne 'e') -and ($userInput -ne 'd'))
             {
-                Write-Host "`n***** Incorrect character selected *****" -ForegroundColor Red -NoNewline
+                Write-Host "`n***** Incorrect character selected *****" `
+                        -ForegroundColor Red -NoNewline
+                # Log Output
+                "***** Incorrect character selected *****" | timestamp |
+                        Tee-Object -FilePath $logFile -Append | Out-Null
+
                 chooseOptionText
                 $userInput = Read-Host
+                $userInput | timestamp | Tee-Object -FilePath $logFile -Append |
+                        Out-Null
             }
         } until (($userInput -eq 'e') -or ($userInput -eq 'd'))
     }
@@ -121,6 +133,9 @@ function chooseOptionText
     Write-Host "' to " -NoNewline
     Write-Host "disable " -ForegroundColor DarkGray -NoNewline
     Write-Host "SSH"
+    # Log Output
+    "Please enter 'e' to enable SSH or 'd' to disable SSH" | timestamp |
+            Tee-Object -FilePath $logFile -Append | Out-Null
 }
 
 
@@ -134,35 +149,59 @@ function Enable-SSH
     # Start the SSH service
     try
     {
+        $tryError = $null
+
 #        Get-VMHost | Get-VMHostService | Where-Object Key -eq "TSM-SSH" |
-#                Start-VMHostService -Confirm:$false -ErrorAction Stop
+#                Start-VMHostService -Confirm:$false -ErrorVariable tryError `
+#                -ErrorAction Stop
 
         Write-Host "$Location " -ForegroundColor Cyan -NoNewline
         Write-Host "SSH " -NoNewline
         Write-Host "Enabled" -ForegroundColor Green
+        # Log Output
+        "$Location SSH Enabled" | timestamp |
+                Tee-Object -FilePath $logFile -Append | Out-Null
     }
     catch
     {
+        # Log full error details
+        $tryError | timestamp | Tee-Object -FilePath $logFile -Append | Out-Null
+
         Write-Host "***** Enabling SSH for " -ForegroundColor Red -NoNewline
         Write-Host "$Location " -ForegroundColor Yellow -NoNewline
         Write-Host "failed *****" -ForegroundColor Red
+        # Log Output
+        "***** Enabling SSH for $Location failed *****" |
+                timestamp | Tee-Object -FilePath $logFile -Append | Out-Null
     }
 
     # Enable the SSH service policy
     try
     {
+        $tryError = $null
+
 #        Get-VMHost | Get-VMHostService | Where-Object Key -eq "TSM-SSH" |
-#                Set-VMHostService -Policy "on" -Confirm:$false -ErrorAction Stop
+#                Set-VMHostService -Policy "on" -Confirm:$false `
+#                -ErrorVariable tryError -ErrorAction Stop
 
         Write-Host "$Location " -ForegroundColor Cyan -NoNewline
         Write-Host "SSH Policy " -NoNewline
         Write-Host "Enabled" -ForegroundColor Green
+        # Log Output
+        "$Location SSH Policy Enabled" | timestamp |
+                Tee-Object -FilePath $logFile -Append | Out-Null
     }
     catch
     {
+        # Log full error details
+        $tryError | timestamp | Tee-Object -FilePath $logFile -Append | Out-Null
+
         Write-Host "***** Enabling SSH Policy for " -ForegroundColor Red -NoNewline
         Write-Host "$Location " -ForegroundColor Yellow -NoNewline
         Write-Host "failed *****" -ForegroundColor Red
+        # Log Output
+        "***** Enabling SSH Policy for $Location failed *****" |
+                timestamp | Tee-Object -FilePath $logFile -Append | Out-Null
     }
 }
 
@@ -177,35 +216,59 @@ function Disable-SSH
     # Stop the SSH service
     try
     {
+        $tryError = $null
+
 #        Get-VMHost | Get-VMHostService | Where-Object Key -eq "TSM-SSH" |
-#                Stop-VMHostService -Confirm:$false  -ErrorAction Stop
+#                Stop-VMHostService -Confirm:$false -ErrorVariable tryError `
+#                -ErrorAction Stop
 
         Write-Host "$Location " -ForegroundColor Cyan -NoNewline
         Write-Host "SSH " -NoNewline
         Write-Host "Disabled" -ForegroundColor DarkGray
+        # Log Output
+        "$Location SSH Disabled" | timestamp |
+                Tee-Object -FilePath $logFile -Append | Out-Null
     }
     catch
     {
+        # Log full error details
+        $tryError | timestamp | Tee-Object -FilePath $logFile -Append | Out-Null
+
         Write-Host "***** Disabling SSH for " -ForegroundColor Red -NoNewline
         Write-Host "$Location " -ForegroundColor Yellow -NoNewline
         Write-Host "failed *****" -ForegroundColor Red
+        # Log Output
+        "***** Disabling SSH for $Location failed *****" |
+                timestamp | Tee-Object -FilePath $logFile -Append | Out-Null
     }
 
     # Disable the SSH service policy
     try
     {
+        $tryError = $null
+
 #        Get-VMHost | Get-VMHostService | Where-Object Key -eq "TSM-SSH" |
-#                Set-VMHostService -Policy "off" -Confirm:$false -ErrorAction Stop
+#                Set-VMHostService -Policy "off" -Confirm:$false `
+#                -ErrorVariable tryError -ErrorAction Stop
 
         Write-Host "$Location " -ForegroundColor Cyan -NoNewline
         Write-Host "SSH Policy " -NoNewline
         Write-Host "Disabled" -ForegroundColor DarkGray
+        # Log Output
+        "$Location SSH Policy Disabled" | timestamp |
+                Tee-Object -FilePath $logFile -Append | Out-Null
     }
     catch
     {
+        # Log full error details
+        $tryError | timestamp | Tee-Object -FilePath $logFile -Append | Out-Null
+
         Write-Host "***** Disabling SSH Policy for " -ForegroundColor Red -NoNewline
         Write-Host "$Location " -ForegroundColor Yellow -NoNewline
         Write-Host "failed *****" -ForegroundColor Red
+        # Log Output
+        "***** Disabling SSH Policy for $Location failed *****" |
+                timestamp | Tee-Object -FilePath $logFile -Append | Out-Null
     }
 }
 
@@ -220,38 +283,62 @@ function Enable-SSH-MAIN
     # Start the SSH service
     try
     {
+        $tryError = $null
+
 #        Get-DataCenter $Location | Get-VMHost | Get-VMHostService |
 #                Where-Object Key -eq "TSM-SSH" |
-#                Start-VMHostService -Confirm:$false -ErrorAction Stop
+#                Start-VMHostService -Confirm:$false -ErrorVariable tryError `
+#                -ErrorAction Stop
 
         Write-Host "`n$Location " -ForegroundColor Cyan -NoNewline
         Write-Host "at Main SSH " -NoNewline
         Write-Host "Enabled" -ForegroundColor Green
+        # Log Output
+        "$Location at Main SSH Enabled" | timestamp |
+                Tee-Object -FilePath $logFile -Append | Out-Null
     }
     catch
     {
+        # Log full error details
+        $tryError | timestamp | Tee-Object -FilePath $logFile -Append | Out-Null
+
         Write-Host "***** Enabling SSH for " -ForegroundColor Red -NoNewline
         Write-Host "$Location " -ForegroundColor Yellow -NoNewline
         Write-Host "at Main failed *****" -ForegroundColor Red
+        # Log Output
+        "***** Enabling SSH for $Location at Main failed *****" |
+                timestamp | Tee-Object -FilePath $logFile -Append | Out-Null
 
     }
 
     # Enable the SSH service policy
     try
     {
+        $tryError = $null
+
 #        Get-DataCenter $Location |Get-VMHost | Get-VMHostService |
 #                Where-Object Key -eq "TSM-SSH" |
-#                Set-VMHostService -Policy "on" -Confirm:$false -ErrorAction Stop
+#                Set-VMHostService -Policy "on" -Confirm:$false `
+#                -ErrorVariable tryError -ErrorAction Stop
 
         Write-Host "$Location " -ForegroundColor Cyan -NoNewline
         Write-Host "at Main SSH Policy " -NoNewline
         Write-Host "Enabled" -ForegroundColor Green
+        # Log Output
+        "$Location at Main SSH Policy Enabled" | timestamp |
+                Tee-Object -FilePath $logFile -Append | Out-Null
     }
     catch
     {
+        # Log full error details
+        $tryError | timestamp | Tee-Object -FilePath $logFile -Append | Out-Null
+
         Write-Host "***** Enabling SSH Policy for " -ForegroundColor Red -NoNewline
         Write-Host "$Location " -ForegroundColor Yellow -NoNewline
         Write-Host "at Main failed *****" -ForegroundColor Red
+        # Log Output
+        "***** Enabling SSH Policy for $Location at Main failed *****" |
+                timestamp | Tee-Object -FilePath $logFile -Append | Out-Null
     }
 }
 
@@ -266,37 +353,61 @@ function Disable-SSH-MAIN
     # Stop the SSH service
     try
     {
+        $tryError = $null
+
 #        Get-DataCenter $Location | Get-VMHost | Get-VMHostService |
 #                Where-Object Key -eq "TSM-SSH" |
-#                Stop-VMHostService -Confirm:$false -ErrorAction Stop
+#                Stop-VMHostService -Confirm:$false -ErrorVariable tryError `
+#                -ErrorAction Stop
 
         Write-Host "`n$Location " -ForegroundColor Cyan -NoNewline
         Write-Host "at Main SSH " -NoNewline
         Write-Host "Disabled" -ForegroundColor DarkGray
+        # Log Output
+        "$Location at Main SSH Disabled" | timestamp |
+                Tee-Object -FilePath $logFile -Append | Out-Null
     }
     catch
     {
+        # Log full error details
+        $tryError | timestamp | Tee-Object -FilePath $logFile -Append | Out-Null
+
         Write-Host "***** Disabling SSH for " -ForegroundColor Red -NoNewline
         Write-Host "$Location " -ForegroundColor Yellow -NoNewline
         Write-Host "at Main failed *****" -ForegroundColor Red
+        # Log Output
+        "***** Disabling SSH for $Location at Main failed *****" |
+                timestamp | Tee-Object -FilePath $logFile -Append | Out-Null
     }
 
     # Disable the SSH service policy
     try
     {
+        $tryError = $null
+
 #        Get-DataCenter $Location |Get-VMHost | Get-VMHostService |
 #                Where-Object Key -eq "TSM-SSH" |
-#                Set-VMHostService -Policy "off" -Confirm:$false -ErrorAction Stop
+#                Set-VMHostService -Policy "off" -Confirm:$false `
+#                -ErrorVariable tryError -ErrorAction Stop
 
         Write-Host "$Location " -ForegroundColor Cyan -NoNewline
         Write-Host "at Main SSH Policy " -NoNewline
         Write-Host "Disabled" -ForegroundColor DarkGray
+        # Log Output
+        "$Location at Main SSH Policy Disabled" | timestamp |
+                Tee-Object -FilePath $logFile -Append | Out-Null
     }
     catch
     {
+        # Log full error details
+        $tryError | timestamp | Tee-Object -FilePath $logFile -Append | Out-Null
+
         Write-Host "***** Disabling SSH Policy for " -ForegroundColor Red -NoNewline
         Write-Host "$Location " -ForegroundColor Yellow -NoNewline
         Write-Host "at Main failed *****" -ForegroundColor Red
+        # Log Output
+        "***** Disabling SSH Policy for $Location at Main failed *****" |
+                timestamp | Tee-Object -FilePath $logFile -Append | Out-Null
     }
 }
 
@@ -359,11 +470,19 @@ function invalidCredentials
 {
     Write-Host "***** Invalid user name or password *****" -ForegroundColor Red
     Write-Host "***** Please re-enter your credentials *****"
+    # Log Output
+    "***** Invalid user name or password *****" |
+            timestamp | Tee-Object -FilePath $logFile -Append | Out-Null
+    "***** Please re-enter your credentials *****" |
+            timestamp | Tee-Object -FilePath $logFile -Append | Out-Null
 
     # Give the user a chance to read the message before login window pops up
     Start-Sleep -s 1
 
-    return Get-Credential
+    $newCreds = Get-Credential
+    $newCreds | timestamp | Tee-Object -FilePath $logFile -Append | Out-Null
+
+    return $newCreds
 }
 
 
@@ -377,7 +496,13 @@ function serverUnavailable
     Write-Host "***** Connecting to " -ForegroundColor Red -NoNewline
     Write-Host "$Location " -ForegroundColor Yellow -NoNewline
     Write-Host "failed *****" -ForegroundColor Red
-    Write-Host "***** The requested VC server is currently unavailable *****" -ForegroundColor Red
+    Write-Host "***** The requested VC server is currently unavailable *****" `
+            -ForegroundColor Red
+    # Log Output
+    "***** Connecting to $Location failed *****" |
+            timestamp | Tee-Object -FilePath $logFile -Append | Out-Null
+    "***** The requested VC server is currently unavailable *****" |
+            timestamp | Tee-Object -FilePath $logFile -Append | Out-Null
 }
 
 
@@ -386,16 +511,17 @@ $vcenter = $env:VCENTER
 $domain = $env:VCENTER_DOMAIN
 $vcenter_main = $env:VCENTER_MAIN
 
-# Store credentials
-if (!$Credential)
+# Create new log file
+$logPath = "C:\Program Files\WindowsPowerShell\Logs"
+$logFile = "$logPath\$(Get-Date -Format "yyyyMMdd_HHmmss").txt"
+If(!(test-path $logPath))
 {
-    $creds = Get-Credential
+    New-Item -ItemType Directory -Force -Path $logPath | Out-Null
 }
-else
-{
-    $creds = $Credential
-}
+New-Item -ItemType File -Force -Path $logFile | Out-Null
 
+# Create timestamp formatting
+filter timestamp {"$(Get-Date -Format "yyyy-MM-dd HH:mm:ss"):  $_"}
 
 # Gather paths for CSVs
 $csv1 = Read-Host "`nPlease enter full path for the CSV of target locations"
@@ -409,6 +535,17 @@ $csv_locations_main = Import-Csv -Path $csv3
 
 # Get user input
 $userInput = getUserInput
+
+# Store credentials
+if (!$Credential)
+{
+    $creds = Get-Credential
+    $creds | timestamp | Tee-Object -FilePath $logFile -Append | Out-Null
+}
+else
+{
+    $creds = $Credential
+}
 
 # Start the runtime timer
 $timerStart = startTimer
@@ -428,14 +565,32 @@ foreach ($location in $csv_locations.Name)
 
             try
             {
-                # Conect to the location's vCenter applicance
                 Write-Host "`nConnecting to $vcenter.$location.$domain..."
-                Connect-VIServer "$vcenter.$location.$domain" -Credential $creds -ErrorVariable connectError -ErrorAction Stop
+                # Log Output
+                "Connecting to $vcenter.$location.$domain..." |
+                        timestamp | Tee-Object -FilePath $logFile -Append |
+                        Out-Null
+
+                # Connect to the location's vCenter appliance
+                $currentConnection = Connect-VIServer "$vcenter.$location.$domain" `
+                        -Credential $creds -ErrorVariable connectError `
+                        -ErrorAction Stop
+                # Log Connection Details
+                "Connected to: $($currentConnection.Name)" | timestamp |
+                        Tee-Object -FilePath $logFile -Append | Out-Null
+                "Port: $($currentConnection.Port)" | timestamp |
+                        Tee-Object -FilePath $logFile -Append | Out-Null
+                "User: $($currentConnection.User)" | timestamp |
+                        Tee-Object -FilePath $logFile -Append | Out-Null
 
                 $connected = $true
             }
             catch
             {
+                # Log full error details
+                $connectError | timestamp | Tee-Object -FilePath $logFile -Append |
+                        Out-Null
+
                 if ($connectError -match 'incorrect user name or password')
                 {
                     $creds = invalidCredentials
@@ -451,8 +606,14 @@ foreach ($location in $csv_locations.Name)
         {
             localLocationCode
 
+            Write-Host "Disconnecting from $vcenter.$location.$domain..."
+            # Log Output
+            "Disconnecting from $vcenter.$location.$domain..." |
+                    timestamp | Tee-Object -FilePath $logFile -Append | Out-Null
+
             # Disconnect from the vCenter appliance
             Disconnect-VIServer "$vcenter.$location.$domain" -Confirm:$false
+
         }
     }
 }
@@ -467,14 +628,29 @@ do
 
     try
     {
-        # Conect to the main location's vCenter applicance
         Write-Host "`nConnecting to $vcenter_main..."
-        Connect-VIServer $vcenter_main -Credential $creds -ErrorVariable connectError -ErrorAction Stop
+        #Log Output
+        "Connecting to $vcenter_main..." |
+                timestamp | Tee-Object -FilePath $logFile -Append | Out-Null
+
+        # Connect to the main location's vCenter appliance
+        $currentConnection = Connect-VIServer $vcenter_main -Credential $creds `
+                -ErrorVariable connectError -ErrorAction Stop
+        # Log Connection Details
+        "Connected to: $($currentConnection.Name)" | timestamp |
+                Tee-Object -FilePath $logFile -Append | Out-Null
+        "Port: $($currentConnection.Port)" | timestamp |
+                Tee-Object -FilePath $logFile -Append | Out-Null
+        "User: $($currentConnection.User)" | timestamp |
+                Tee-Object -FilePath $logFile -Append | Out-Null
 
         $connected = $true
     }
     catch
     {
+        # Log full error details
+        $connectError | timestamp | Tee-Object -FilePath $logFile -Append | Out-Null
+
         if ($connectError -match 'incorrect user name or password')
         {
             $creds = invalidCredentials
@@ -495,6 +671,11 @@ if ($connected -eq $true)
             mainLocationCode
         }
     }
+
+    Write-Host "Disconnecting from $vcenter_main..."
+    # Log Output
+    "Disconnecting from $vcenter_main..." |
+            timestamp | Tee-Object -FilePath $logFile -Append | Out-Null
 
     # Disconnect from the vCenter appliance
     Disconnect-VIServer $vcenter_main -Confirm:$false

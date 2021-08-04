@@ -12,9 +12,9 @@
 #
 #
 # ****************************** IMPORTANT NOTES *******************************
-# This script requires the installation of the PowerCLI module. If this is not
-# yet installed on this machine, open PowerShell and run the following command:
-# Install-Module VMware.PowerCLI
+# This script must be run as an administrator and requires the installation of
+# the PowerCLI module. If this is not yet installed on this machine, open
+# PowerShell and run the following command:  Install-Module VMware.PowerCLI
 #
 # There are three CSVs required for this script, all of which contain the
 # locations in a single column with a Header of 'Name':
@@ -26,6 +26,9 @@
 # VCENTER = The appliances hostname ('appliance' in the example above)
 # VCENTER_DOMAIN = The company's domain ('company.com' in the example above)
 # VCENTER_MAIN = The main location's vCenter appliance's FQDN
+#
+# A log is automatically created when running this script and is located at:
+# C:\Program Files\WindowsPowerShell\Logs
 ################################################################################
 
 
@@ -133,11 +136,19 @@ function invalidCredentials
 {
     Write-Host "***** Invalid user name or password *****" -ForegroundColor Red
     Write-Host "***** Please re-enter your credentials *****"
+    # Log Output
+    "***** Invalid user name or password *****" |
+            timestamp | Tee-Object -FilePath $logFile -Append | Out-Null
+    "***** Please re-enter your credentials *****" |
+            timestamp | Tee-Object -FilePath $logFile -Append | Out-Null
 
     # Give the user a chance to read the message before login window pops up
     Start-Sleep -s 1
 
-    return Get-Credential
+    $newCreds = Get-Credential
+    $newCreds | timestamp | Tee-Object -FilePath $logFile -Append | Out-Null
+
+    return $newCreds
 }
 
 
@@ -151,7 +162,13 @@ function serverUnavailable
     Write-Host "***** Connecting to " -ForegroundColor Red -NoNewline
     Write-Host "$Location " -ForegroundColor Yellow -NoNewline
     Write-Host "failed *****" -ForegroundColor Red
-    Write-Host "***** The requested VC server is currently unavailable *****" -ForegroundColor Red
+    Write-Host "***** The requested VC server is currently unavailable *****" `
+            -ForegroundColor Red
+    # Log Output
+    "***** Connecting to $Location failed *****" |
+            timestamp | Tee-Object -FilePath $logFile -Append | Out-Null
+    "***** The requested VC server is currently unavailable *****" |
+            timestamp | Tee-Object -FilePath $logFile -Append | Out-Null
 }
 
 
@@ -160,16 +177,17 @@ $vcenter = $env:VCENTER
 $domain = $env:VCENTER_DOMAIN
 $vcenter_main = $env:VCENTER_MAIN
 
-# Store credentials
-if (!$Credential)
+# Create new log file
+$logPath = "C:\Program Files\WindowsPowerShell\Logs"
+$logFile = "$logPath\$(Get-Date -Format "yyyyMMdd_HHmmss").txt"
+If(!(test-path $logPath))
 {
-    $creds = Get-Credential
+    New-Item -ItemType Directory -Force -Path $logPath | Out-Null
 }
-else
-{
-    $creds = $Credential
-}
+New-Item -ItemType File -Force -Path $logFile | Out-Null
 
+# Create timestamp formatting
+filter timestamp {"$(Get-Date -Format "yyyy-MM-dd HH:mm:ss"):  $_"}
 
 # Gather paths for CSVs
 $csv1 = Read-Host "`nPlease enter full path for the CSV of target locations"
@@ -183,6 +201,17 @@ $csv_locations_main = Import-Csv -Path $csv3
 
 # Get user input
 $userInput = getUserInput
+
+# Store credentials
+if (!$Credential)
+{
+    $creds = Get-Credential
+    $creds | timestamp | Tee-Object -FilePath $logFile -Append | Out-Null
+}
+else
+{
+    $creds = $Credential
+}
 
 # Start the runtime timer
 $timerStart = startTimer
@@ -202,14 +231,32 @@ foreach ($location in $csv_locations.Name)
 
             try
             {
-                # Conect to the location's vCenter applicance
                 Write-Host "`nConnecting to $vcenter.$location.$domain..."
-                Connect-VIServer "$vcenter.$location.$domain" -Credential $creds -ErrorVariable connectError -ErrorAction Stop
+                # Log Output
+                "Connecting to $vcenter.$location.$domain..." |
+                        timestamp | Tee-Object -FilePath $logFile -Append |
+                        Out-Null
+
+                # Connect to the location's vCenter appliance
+                $currentConnection = Connect-VIServer "$vcenter.$location.$domain" `
+                        -Credential $creds -ErrorVariable connectError `
+                        -ErrorAction Stop
+                # Log Connection Details
+                "Connected to: $($currentConnection.Name)" | timestamp |
+                        Tee-Object -FilePath $logFile -Append | Out-Null
+                "Port: $($currentConnection.Port)" | timestamp |
+                        Tee-Object -FilePath $logFile -Append | Out-Null
+                "User: $($currentConnection.User)" | timestamp |
+                        Tee-Object -FilePath $logFile -Append | Out-Null
 
                 $connected = $true
             }
             catch
             {
+                # Log full error details
+                $connectError | timestamp | Tee-Object -FilePath $logFile -Append |
+                        Out-Null
+
                 if ($connectError -match 'incorrect user name or password')
                 {
                     $creds = invalidCredentials
@@ -225,8 +272,14 @@ foreach ($location in $csv_locations.Name)
         {
             localLocationCode
 
+            Write-Host "Disconnecting from $vcenter.$location.$domain..."
+            # Log Output
+            "Disconnecting from $vcenter.$location.$domain..." |
+                    timestamp | Tee-Object -FilePath $logFile -Append | Out-Null
+
             # Disconnect from the vCenter appliance
             Disconnect-VIServer "$vcenter.$location.$domain" -Confirm:$false
+
         }
     }
 }
@@ -241,14 +294,29 @@ do
 
     try
     {
-        # Conect to the main location's vCenter applicance
         Write-Host "`nConnecting to $vcenter_main..."
-        Connect-VIServer $vcenter_main -Credential $creds -ErrorVariable connectError -ErrorAction Stop
+        #Log Output
+        "Connecting to $vcenter_main..." |
+                timestamp | Tee-Object -FilePath $logFile -Append | Out-Null
+
+        # Connect to the main location's vCenter appliance
+        $currentConnection = Connect-VIServer $vcenter_main -Credential $creds `
+                -ErrorVariable connectError -ErrorAction Stop
+        # Log Connection Details
+        "Connected to: $($currentConnection.Name)" | timestamp |
+                Tee-Object -FilePath $logFile -Append | Out-Null
+        "Port: $($currentConnection.Port)" | timestamp |
+                Tee-Object -FilePath $logFile -Append | Out-Null
+        "User: $($currentConnection.User)" | timestamp |
+                Tee-Object -FilePath $logFile -Append | Out-Null
 
         $connected = $true
     }
     catch
     {
+        # Log full error details
+        $connectError | timestamp | Tee-Object -FilePath $logFile -Append | Out-Null
+
         if ($connectError -match 'incorrect user name or password')
         {
             $creds = invalidCredentials
@@ -269,6 +337,11 @@ if ($connected -eq $true)
             mainLocationCode
         }
     }
+
+    Write-Host "Disconnecting from $vcenter_main..."
+    # Log Output
+    "Disconnecting from $vcenter_main..." |
+            timestamp | Tee-Object -FilePath $logFile -Append | Out-Null
 
     # Disconnect from the vCenter appliance
     Disconnect-VIServer $vcenter_main -Confirm:$false

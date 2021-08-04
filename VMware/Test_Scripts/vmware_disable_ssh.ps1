@@ -6,13 +6,13 @@ $creds = Get-Credential
 
 Connect-VIServer "$vcenter.$location.$domain" -Credential $creds
 
-Get-VMHost | Get-VMHostService | Where-Object Key -eq "TSM-SSH" | Stop-VMHostService -Confirm:$false
-Get-VMHost | Get-VMHostService | Where-Object Key -eq "TSM-SSH" | Set-VMHostService -Policy "off" -Confirm:$false
+#Get-VMHost | Get-VMHostService | Where-Object Key -eq "TSM-SSH" | Stop-VMHostService -Confirm:$false
+#Get-VMHost | Get-VMHostService | Where-Object Key -eq "TSM-SSH" | Set-VMHostService -Policy "off" -Confirm:$false
 
 Disconnect-VIServer "$vcenter.$location.$domain" -Confirm:$false
 Connect-VIServer $vcenter_main -Credential $creds
 
-Get-DataCenter $location | Get-VMHost | Get-VMHostService | Where-Object Key -eq "TSM-SSH" | Stop-VMHostService -Confirm:$false
-Get-DataCenter $location | Get-VMHost | Get-VMHostService | Where-Object Key -eq "TSM-SSH" | Set-VMHostService -Policy "off" -Confirm:$false
+#Get-DataCenter $location | Get-VMHost | Get-VMHostService | Where-Object Key -eq "TSM-SSH" | Stop-VMHostService -Confirm:$false
+#Get-DataCenter $location | Get-VMHost | Get-VMHostService | Where-Object Key -eq "TSM-SSH" | Set-VMHostService -Policy "off" -Confirm:$false
 
 Disconnect-VIServer $vcenter_main -Confirm:$false
