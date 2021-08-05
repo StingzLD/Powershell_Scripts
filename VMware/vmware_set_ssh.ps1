@@ -290,7 +290,7 @@ function Enable-SSH-MAIN
                 Start-VMHostService -Confirm:$false -ErrorVariable tryError `
                 -ErrorAction Stop
 
-        Write-Host "`n$Location " -ForegroundColor Cyan -NoNewline
+        Write-Host "$Location " -ForegroundColor Cyan -NoNewline
         Write-Host "at Main SSH " -NoNewline
         Write-Host "Enabled" -ForegroundColor Green
         # Log Output
@@ -323,7 +323,7 @@ function Enable-SSH-MAIN
 
         Write-Host "$Location " -ForegroundColor Cyan -NoNewline
         Write-Host "at Main SSH Policy " -NoNewline
-        Write-Host "Enabled" -ForegroundColor Green
+        Write-Host "Enabled`n" -ForegroundColor Green
         # Log Output
         "$Location at Main SSH Policy Enabled" | timestamp |
                 Tee-Object -FilePath $logFile -Append | Out-Null
@@ -335,7 +335,7 @@ function Enable-SSH-MAIN
 
         Write-Host "***** Enabling SSH Policy for " -ForegroundColor Red -NoNewline
         Write-Host "$Location " -ForegroundColor Yellow -NoNewline
-        Write-Host "at Main failed *****" -ForegroundColor Red
+        Write-Host "at Main failed *****`n" -ForegroundColor Red
         # Log Output
         "***** Enabling SSH Policy for $Location at Main failed *****" |
                 timestamp | Tee-Object -FilePath $logFile -Append | Out-Null
@@ -360,7 +360,7 @@ function Disable-SSH-MAIN
                 Stop-VMHostService -Confirm:$false -ErrorVariable tryError `
                 -ErrorAction Stop
 
-        Write-Host "`n$Location " -ForegroundColor Cyan -NoNewline
+        Write-Host "$Location " -ForegroundColor Cyan -NoNewline
         Write-Host "at Main SSH " -NoNewline
         Write-Host "Disabled" -ForegroundColor DarkGray
         # Log Output
@@ -392,7 +392,7 @@ function Disable-SSH-MAIN
 
         Write-Host "$Location " -ForegroundColor Cyan -NoNewline
         Write-Host "at Main SSH Policy " -NoNewline
-        Write-Host "Disabled" -ForegroundColor DarkGray
+        Write-Host "Disabled`n" -ForegroundColor DarkGray
         # Log Output
         "$Location at Main SSH Policy Disabled" | timestamp |
                 Tee-Object -FilePath $logFile -Append | Out-Null
@@ -404,7 +404,7 @@ function Disable-SSH-MAIN
 
         Write-Host "***** Disabling SSH Policy for " -ForegroundColor Red -NoNewline
         Write-Host "$Location " -ForegroundColor Yellow -NoNewline
-        Write-Host "at Main failed *****" -ForegroundColor Red
+        Write-Host "at Main failed *****`n" -ForegroundColor Red
         # Log Output
         "***** Disabling SSH Policy for $Location at Main failed *****" |
                 timestamp | Tee-Object -FilePath $logFile -Append | Out-Null
