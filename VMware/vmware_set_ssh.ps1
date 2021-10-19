@@ -514,7 +514,7 @@ $vcenter_main = $env:VCENTER_MAIN
 # Create new log file
 $logPath = "C:\Program Files\WindowsPowerShell\Logs"
 $logFile = "$logPath\$(Get-Date -Format "yyyyMMdd_HHmmss").txt"
-If(!(test-path $logPath))
+if(!(test-path $logPath))
 {
     New-Item -ItemType Directory -Force -Path $logPath | Out-Null
 }

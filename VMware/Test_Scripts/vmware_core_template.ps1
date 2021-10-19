@@ -31,58 +31,14 @@
 # C:\Program Files\WindowsPowerShell\Logs
 ################################################################################
 
-
-################################################################################
-#                                                                              #
-#                   This section contains optional functions                   #
-#                                                                              #
-#          These functions must exist, but the contents can be edited          #
-#                      or commented out, if not required                       #
-#                                                                              #
-################################################################################
-
 # Parameters
 param (
     # Typical "Credential" parameter
     [ValidateNotNull()]
     [PSCredential]
     [System.Management.Automation.CredentialAttribute()]
-    $Credential = $null,
-
-    # Allows user to specificy the Enable or Disable state
-    [Parameter(HelpMessage = "Values are either 'Enable' or 'Disable'")]
-    [ValidateSet("Enable", "Disable")]
-    [string] $State = $null
+    $Credential = $null
 )
-
-
-# Starts a timer for script runtime
-# Uncomment the code inside the function, if you wish to time the script
-function startTimer
-{
-#    $(Get-Date)
-}
-
-
-# Stops the timer and prints the runtime
-# Uncomment the code inside the function, if you wish to time the script
-function stopTimer
-{
-#    $timerStop = $(Get-Date) - $timerStart
-#    $timerTotal = "{0:HH:mm:ss}" -f ([datetime]$timerStop.Ticks)
-#    Write-Host "This script completed in $timerTotal"
-}
-
-
-# Get input from user
-function getUserInput
-{
-    # <<< IF YOU NEED USER INPUT, WRITE THE FUNCTION HERE >>>
-    #
-    #    THE RETURNED VALUE WILL BE STORED IN THE $userInput
-    #    VARIABLE AND CAN BE USED IN YOUR HELPER FUNCTIONS
-
-}
 
 
 ################################################################################
@@ -180,7 +136,7 @@ $vcenter_main = $env:VCENTER_MAIN
 # Create new log file
 $logPath = "C:\Program Files\WindowsPowerShell\Logs"
 $logFile = "$logPath\$(Get-Date -Format "yyyyMMdd_HHmmss").txt"
-If(!(test-path $logPath))
+if(!(test-path $logPath))
 {
     New-Item -ItemType Directory -Force -Path $logPath | Out-Null
 }
@@ -199,9 +155,6 @@ $csv_locations = Import-Csv -Path $csv1
 $csv_locations_vxrails = Import-Csv -Path $csv2
 $csv_locations_main = Import-Csv -Path $csv3
 
-# Get user input
-$userInput = getUserInput
-
 # Store credentials
 if (!$Credential)
 {
@@ -212,9 +165,6 @@ else
 {
     $creds = $Credential
 }
-
-# Start the runtime timer
-$timerStart = startTimer
 
 # Set SSH for hosts with a local vCenter appliance
 foreach ($location in $csv_locations.Name)
@@ -346,6 +296,3 @@ if ($connected -eq $true)
     # Disconnect from the vCenter appliance
     Disconnect-VIServer $vcenter_main -Confirm:$false
 }
-
-# Stop the timer and print result
-stopTimer
