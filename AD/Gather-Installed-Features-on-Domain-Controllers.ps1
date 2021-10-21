@@ -6,36 +6,36 @@ $csv = '<enter path to export file>'
 foreach ($server in $list) {
     $hostname = $server.Name
     $temp = @()
-    $connectError = $null
+    $tryError = $null
 
     try {
-        Test-Connection -BufferSize 32 -Count 1 -ComputerName $hostname -ErrorVariable connectError -ErrorAction Stop
+        Test-Connection -BufferSize 32 -Count 1 -ComputerName $hostname `
+            -ErrorVariable tryError -ErrorAction Stop
 
-        Write-Output "Collecting data on $hostname"
+        Write-Host "Collecting data on $hostname"
 
         try {
-            $features = Get-WindowsFeature -ComputerName $hostname -ErrorVariable connectError -ErrorAction Stop
+            $features = Get-WindowsFeature -ComputerName $hostname `
+                -ErrorVariable tryError -ErrorAction Stop |
+                Where-Object{$_.InstallState -eq 'Installed'}
+            
             foreach ($feature in $features) {
-                if ($feature.Installed -eq 'True') {
                     $temp += @(
                         $feature.DisplayName
                     )
-                }
-            } 
-        } catch {
-            if ($connectError -match 'Get-WindowsFeature') {
-                Write-Output "Data collection on $hostname failed" -ForegroundColor Red
-                
-                $temp += @(
-                    $connectError
-                )
             }
-        }
-    } catch {
-        Write-Output "Connection to $hostname failed" -ForegroundColor Red
 
+        } catch {
+            Write-Host "Data collection on $hostname failed" -ForegroundColor Red
+        }
+
+    } catch {
+        Write-Host "Connection to $hostname failed" -ForegroundColor Red
+    }
+
+    if (-not $temp) {
         $temp += @(
-            $connectError
+                $tryError
         )
     }
 
@@ -45,4 +45,5 @@ foreach ($server in $list) {
     }
 }
 
-$toExport | Select-Object -Property 'Server',@{Name='Features';Expression={[string]::join(';', ($_.Features))}} | Export-Csv -Path $csv
+$toExport | Select-Object -Property 'Server',@{Name='Features';`
+    Expression={[string]::join(';', ($_.Features))}} | Export-Csv -Path $csv
