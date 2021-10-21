@@ -1,5 +1,17 @@
-$ou = '<enter OU here>'
-$csv = '<enter path to export file>'
+################################################################################
+# The purpose of this script is to collect a list of installed features on all
+# enabled Domain Controllers in the environment.
+#
+# ****************************** IMPORTANT NOTES *******************************
+# This script must be run as an administrator in order to create the exported
+# CSV file in the root of the C: directory.
+#
+# The $ou variable is the Distinguished Name of the target OU. For example:
+# OU=Domain Controllers,DC=yourdomain,DC=com
+################################################################################
+
+$ou = '<enter Distinguished Name of target OU here>'
+$csv = 'C:\installed-features-on-dcs.csv'
 $toExport = @()
 
 # Gather a list of enabled servers in the specified OU and sort by name
