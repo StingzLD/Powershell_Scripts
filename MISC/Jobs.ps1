@@ -74,13 +74,11 @@ function ProcessJobs
                 $jobs[$i].Processed = $true
                 $Global:activeJobs -= 1
                 $Global:targetsProcessed += 1
-
-                Start-Sleep -Milliseconds 100
                 Remove-Job -Name $jobs[$i].Name
             }
         }
     }
-    Start-Sleep -Milliseconds 2000
+    Start-Sleep -Milliseconds 500
 }
 
 
@@ -93,7 +91,7 @@ while ($Global:targetsProcessed -lt $listCount)
 {
     Write-Host "Checking for new jobs" -ForegroundColor Cyan
     CheckForJobs
-    Write-Host "Current Active Jobs: $Global:activeJobs `n"
+    Write-Host "Current Active Jobs: $Global:activeJobs"
 
     Write-Host "Proccessing active jobs" -ForegroundColor Cyan
     ProcessJobs
