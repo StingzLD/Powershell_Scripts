@@ -68,7 +68,8 @@ function ProcessJobs
     {
         if ($jobs[$i].Processed -eq $false)
         {
-            if ($jobs[$i].Job.State -eq 'Completed' -and $jobs[$i].Job.HasMoreData -eq $true)
+            if ($jobs[$i].Job.State -eq 'Completed' -and
+                    $jobs[$i].Job.HasMoreData -eq $true)
             {
                 $jobs[$i].Result = $jobs[$i].Job.HasMoreData
                 $jobs[$i].Processed = $true
